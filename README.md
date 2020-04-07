@@ -4,7 +4,7 @@
   
  > ## Employee-Directory is a React-App that utilizes React components to make a working employee directory that allows the user to search through employees by name. when you type in the search bar, it auto updates the employees that appear on your view port bassed off of the letters in the particular employees name! 
 
-  ### Deployed app
+  ### Deployed app: https://protected-brushlands-70889.herokuapp.com/
   
   ## Table of Contents
   
