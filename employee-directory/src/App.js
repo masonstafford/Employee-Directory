@@ -1,42 +1,73 @@
 import React from "react";
-import "./App.css";
-import API from "./utils/api";
-import Container from "./components/Container/container"; 
-import SearchBar from "./components/SearchBar/searchBar"; 
+import API from "./utils/API";
+import Wrapper from "./components/Wrapper/Wrapper";
+import EmployeeDisplay from "./components/Employee/Employee";
+import Header from "./components/Header/Header"
 
 class App extends React.Component {
   state = {
-    employees: []
+    employees: [],
+    term: "",
+    masterList: [],
+    hasBeenSorted: false,
   };
 
   componentDidMount() {
-    API.getMany(10)
-      .then(res => this.setState({ employees: res.data.results }))
-      .catch(err => console.log(MediaStreamError));
+    API.getMany(250)
+      .then((res) =>
+        this.setState({
+          employees: res.data.results,
+          masterList: res.data.results,
+        })
+      )
+      .catch((err) => console.log(err));
   }
-
-  handleSearch = event => {
+  handleSearch = (event) => {
     event.preventDefault();
     console.log(event.target.value);
-
+    this.setState({ term: event.target.value });
     const { value } = event.target;
-    const searched = this.state.employees.filter(employee =>
-      employee.name.first.includes(value)
+    const searched = this.state.masterList.filter((employee) =>
+      employee.name.first.toLowerCase().includes(value.toLowerCase())
     );
-    searched.map(employee => console.log(employee));
     this.setState({ employees: searched });
   };
 
   render() {
-    const filtered = this.state.employees.filter();
-
     return (
-    
-    <Container>
-      <SearchBar />
-    
-    </Container>
-    
+      <Wrapper>
+        <Header />
+        <div className="search-bar">
+          <input
+            onChange={this.handleSearch}
+            value={this.state.term}
+            placeholder="search"
+          ></input>
+        </div>
+        <table className="table">
+          <thead>
+            <tbody>
+              <tr>
+                <th>Image</th>
+                <th style={{ cursor: "pointer" }} onClick={this.handleSort}>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Location</th>
+              </tr>
+              {this.state.employees.map((employee) => (
+                <EmployeeDisplay
+                  key={employee.login.uuid}
+                  name={`${employee.name.first} ${employee.name.last}`}
+                  image={employee.picture.large}
+                  location={`${employee.location.city} ${employee.location.state}`}
+                  email={employee.email}
+                  number={employee.phone}
+                />
+              ))}
+            </tbody>
+          </thead>
+        </table>
+      </Wrapper>
     );
   }
 }
